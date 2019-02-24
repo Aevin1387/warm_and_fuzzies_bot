@@ -1,2 +1,9 @@
+# Ignore config
+server.yml
+tokens.yml
+
+# Ignore SSL private key
 ssl/*.key
+
+# Ignore logs
 log/
