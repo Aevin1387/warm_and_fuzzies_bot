@@ -14,14 +14,14 @@ ActiveRecord::Base.establish_connection(
 )
 
 # Set up database tables and columns
-ActiveRecord::Schema.define do
-  create_table :warm_and_fuzzy_shifts, force: true do |t|
-    t.integer "user_id"
-    t.datetime "start_time", null: false
-    t.datetime "end_time"
-    t.integer "chat_id"
-  end
-end
+# ActiveRecord::Schema.define do
+#   create_table :warm_and_fuzzy_shifts, force: false do |t|
+#     t.integer "user_id"
+#     t.datetime "start_time", null: false
+#     t.datetime "end_time"
+#     t.integer "chat_id"
+#   end
+# end
 
 class WarmAndFuzzyShift < ActiveRecord::Base
 end
@@ -53,7 +53,9 @@ class WarmAndFuzzyShiftHandler
   end
 
   def list_shifts
+    puts "#{WarmAndFuzzyShift.all.to_a.as_json}"
     shifts = WarmAndFuzzyShift.where.not(end_time: nil)
+    puts "Found the following shifts: #{shifts.to_a.as_json}"
     shift_results = []
     members_cache = {}
     shifts.each do |result|
@@ -79,7 +81,7 @@ class WarmAndFuzzyShiftHandler
     shift_str = ["Finished shifts:"]
     shift_results.each do |result|
       time_diff = (result[:end_time] - result[:start_time]) / 60.0
-      shift_str.push("#{result['member']} worked #{time_diff} minutes")
+      shift_str.push("#{result[:member]['username']} worked #{time_diff} minutes")
     end
     @client.api.send_message(chat_id: @chat_id, text: shift_str.join("\n"))
   end
