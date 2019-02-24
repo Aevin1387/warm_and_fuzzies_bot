@@ -16,10 +16,10 @@ ActiveRecord::Base.establish_connection(
 # Set up database tables and columns
 # ActiveRecord::Schema.define do
 #   create_table :warm_and_fuzzy_shifts, force: false do |t|
-#     t.integer "user_id"
+#     t.integer "user_id", limit: 8
 #     t.datetime "start_time", null: false
 #     t.datetime "end_time"
-#     t.integer "chat_id"
+#     t.integer "chat_id", limit: 8
 #   end
 # end
 
@@ -58,6 +58,10 @@ class WarmAndFuzzyShiftHandler
     puts "Found the following shifts: #{shifts.to_a.as_json}"
     shift_results = []
     members_cache = {}
+    if shifts.length == 0
+      @client.api.send_message(chat_id: @chat_id, text: "No shifts recorded")
+      return
+    end
     shifts.each do |result|
       member_id = result.user_id
       member = members_cache[member_id]
@@ -88,15 +92,19 @@ class WarmAndFuzzyShiftHandler
 
   def on_shift
     shifts = WarmAndFuzzyShift.where(end_time: nil)
-    on_shift_results = ["Currently on shift:"]
-    shifts.each do |results|
-      member_result = @client.api.get_chat_member(chat_id: @chat_id, user_id: results.user_id)['result']
-      member = member_result['user']
-      on_shift_time = Time.at(results.start_time).strftime('%m/%d %H:%M')
-      on_shift_results.push("#{member['username']} since #{on_shift_time}")
-    end
+    if shifts.length > 0
+      on_shift_results = ["Currently on shift:"]
+      shifts.each do |results|
+        member_result = @client.api.get_chat_member(chat_id: @chat_id, user_id: results.user_id)['result']
+        member = member_result['user']
+        on_shift_time = Time.at(results.start_time).strftime('%m/%d %H:%M')
+        on_shift_results.push("#{member['username']} since #{on_shift_time}")
+      end
 
-    @client.api.send_message(chat_id: @chat_id, text: on_shift_results.join("\n"))
+      @client.api.send_message(chat_id: @chat_id, text: on_shift_results.join("\n"))
+    else
+      @client.api.send_message(chat_id: @chat_id, text: "No one on shift.")
+    end
   end
 
 end
