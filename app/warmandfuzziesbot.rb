@@ -2,9 +2,9 @@
 # file: warmandfuzziesbot.rb
 #
 require 'telegram/bot'
-require 'pq'
 require 'pg'
 require 'active_record'
+require 'time_difference'
 
 ActiveRecord::Base.establish_connection(
   adapter: 'postgresql',
@@ -48,8 +48,8 @@ class WarmAndFuzzyShiftHandler
     shift = WarmAndFuzzyShift.where(user_id: @message.from.id, end_time: nil).first
     return unless shift
     shift.update(end_time: Time.now)
-    shift_length = (shift.end_time - shift.start_time) / 60.0
-    @client.api.send_message(chat_id: @chat_id, text: "#{@message.from.username} has ended their shift. Shift length: #{shift_length} minutes")
+    shift_length = TimeDifference.between(shift.start_time, shift.end_time).humanize
+    @client.api.send_message(chat_id: @chat_id, text: "#{@message.from.username} has ended their shift. Shift length: #{shift_length}")
   end
 
   def list_shifts
@@ -84,8 +84,8 @@ class WarmAndFuzzyShiftHandler
 
     shift_str = ["Finished shifts:"]
     shift_results.each do |result|
-      time_diff = (result[:end_time] - result[:start_time]) / 60.0
-      shift_str.push("#{result[:member]['username']} worked #{time_diff} minutes")
+      time_diff = TimeDifference.between(result[:start_time], result[:end_time]).humanize
+      shift_str.push("#{result[:member]['username']} worked #{time_diff}")
     end
     @client.api.send_message(chat_id: @chat_id, text: shift_str.join("\n"))
   end

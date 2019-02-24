@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 gem 'awesome_print'
 gem 'colorizer'
+gem 'time_difference'
 
 # fast JSON processing
 gem 'oj'
@@ -16,5 +17,4 @@ gem 'telegram-bot-ruby'
 
 # Database
 gem 'activerecord'
-gem 'pq'
 gem 'pg'
