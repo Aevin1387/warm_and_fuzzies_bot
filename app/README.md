@@ -2,6 +2,8 @@
 
 This bot is used for tracking Warm and Fuzzies volunteer hours. I should rename this to VolunteerBot at some point.
 
+![example](https://i.imgur.com/BebvdKn.png)
+
 ## Setup
 
 This app requires some setup. For running the app, you'll need to setup the table. For the first run, uncomment the schema definition, then comment out again once the table has been made.
