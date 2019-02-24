@@ -13,3 +13,8 @@ gem 'rack'
 
 # Telegram Bot API for Rubysts
 gem 'telegram-bot-ruby'
+
+# Database
+gem 'activerecord'
+gem 'pq'
+gem 'pg'
