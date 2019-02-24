@@ -3,6 +3,8 @@ source 'https://rubygems.org'
 gem 'awesome_print'
 gem 'colorizer'
 gem 'time_difference'
+gem 'activesupport'
+gem 'pry'
 
 # fast JSON processing
 gem 'oj'
