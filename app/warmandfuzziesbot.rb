@@ -54,7 +54,7 @@ class WarmAndFuzzyShiftHandler
 
   def list_shifts
     puts "#{WarmAndFuzzyShift.all.to_a.as_json}"
-    shifts = WarmAndFuzzyShift.where.not(end_time: nil)
+    shifts = WarmAndFuzzyShift.where.not(end_time: nil).where(chat_id: @chat_id)
     puts "Found the following shifts: #{shifts.to_a.as_json}"
     shift_results = []
     members_cache = {}
@@ -91,7 +91,7 @@ class WarmAndFuzzyShiftHandler
   end
 
   def on_shift
-    shifts = WarmAndFuzzyShift.where(end_time: nil)
+    shifts = WarmAndFuzzyShift.where(end_time: nil, chat_id: @chat_id)
     if shifts.length > 0
       on_shift_results = ["Currently on shift:"]
       shifts.each do |results|
