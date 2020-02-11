@@ -6,6 +6,7 @@ require_relative 'lib/certificate'
 require_relative 'lib/apptemplate'
 require_relative 'lib/proxy'
 require_relative 'lib/server'
+require_relative 'app/warmandfuzziesbot'
 
 include Config
 include Proxy
@@ -79,17 +80,17 @@ end
 #
 namespace :certificate do
   desc "Create SSL certificate"
-  task :new do 
+  task :new do
     Server.check(verbose:false)
     puts "Create private_key, public certificate pair.\nmodify and run yourself the command below:\n\n"
     # sh
-    puts Certificate.create_pair_command(Server.certificate_file_key, 
+    puts Certificate.create_pair_command(Server.certificate_file_key,
                                          Server.certificate_file_pem,
                                          Server.host).green
   end
 
   desc "Show public certificate"
-  task :show do 
+  task :show do
     Server.check(verbose:false)
     sh Certificate.show_command(Server.certificate_file_pem)
   end
@@ -105,28 +106,28 @@ namespace :proxy do
       Server.check(verbose: false)
       puts "\nSSL config section to insert in your nginx config file (/etc/nginx/sites-available/default):\n\n"
       puts Proxy.config.green
-    end  
+    end
   end
 
   desc "Start proxy server"
-  task :start do 
+  task :start do
     sh Proxy.start
   end
 
   desc "Restart proxy server"
-  task :restart do 
+  task :restart do
     sh Proxy.restart
   end
 
   desc "Stop proxy server"
-  task :stop do 
+  task :stop do
     sh Proxy.stop
   end
 end
 
 #
 # RACK SERVER
-# 
+#
 namespace :server do
   namespace :config do
     desc "Show server configuration: #{Config.server_config_file}"
@@ -143,35 +144,35 @@ namespace :server do
   end
 
   desc "Start rack server"
-  task :start do 
+  task :start do
     Server.check(verbose:false)
     sh Server.start
   end
 
   desc "Restart rack server"
-  task :restart do 
+  task :restart do
     Server.check(verbose:false)
     sh Server.restart
   end
 
   desc "Stop rack server"
-  task :stop do 
+  task :stop do
     Server.check(verbose:false)
     sh Server.stop
   end
 
   desc "Show rack server pid"
-  task :pid do 
-    sh "ps ax | grep BOTServer" 
+  task :pid do
+    sh "ps ax | grep BOTServer"
   end
 
   desc "Tail -f rack sever logfile: #{Config.home_directory}/log/thin.log"
   task :log do
-    sh "tail -f log/thin.log" 
+    sh "tail -f log/thin.log"
   end
 end
 
-# aliases 
+# aliases
 #task :server => 'server:show'
 #task :token => 'tokens:show'
 #task :tokens => 'tokens:show'
