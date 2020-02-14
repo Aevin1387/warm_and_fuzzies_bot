@@ -39,6 +39,11 @@ class WarmAndFuzzyShiftHandler
 
   def start_shift
     puts "Running start_shift"
+    existing_shift = WarmAndFuzzyShift.where(user_id: @message.from.id, chat_id: @chat_id, end_time: nil).first
+    if existing_shift
+      @client.api.send_message(chat_id: @chat_id, text: "#{@message.from.username} already has an existing shift")
+      return
+    end
     shift = WarmAndFuzzyShift.create(user_id: @message.from.id, start_time: Time.now, chat_id: @chat_id)
     puts "Sending message #{@message.from.username} has started a shift"
     @client.api.send_message(chat_id: @chat_id, text: "#{@message.from.username} has started a shift")
@@ -121,7 +126,7 @@ class WarmAndFuzziesBot
     update_id = update.update_id
     message = update.message
     puts "Message is #{message}"
-    puts "Text iss #{message.text}"
+    puts "Text is #{message.text}"
     puts "Chat id is #{message.chat.id}"
     puts "User is #{message.from.id}"
     unless message.nil?
