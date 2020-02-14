@@ -73,6 +73,12 @@ namespace :webhook do
     certificate = Server.certificate_file_pem
     Webhook.reset(args.token, certificate )
   end
+
+  desc "Get webook info"
+  task :get, [:token] do |t, args|
+     Server.check(verbose:false)
+     Webhook.get(args.token)
+  end
 end
 
 #

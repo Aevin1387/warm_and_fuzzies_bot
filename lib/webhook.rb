@@ -13,6 +13,21 @@ module Webhook
     webhook(:reset, token, certificate_file)
   end
 
+  def self.get(token)
+    client = Telegram::Bot::Client.new(token)
+    begin
+      resp = client.api.get_webhook_info
+    rescue Exception => e
+      # error
+      $stderr.puts "ERROR. Telegram Server refuse request for token: #{token}".red
+      $stderr.puts "reason: #{e.message}".red #e.backtrace.inspect
+      exit
+    else
+      # success
+      puts "ok: #{resp['ok']}, result: #{resp['result']}, description: #{resp['description']}".yellow
+    end
+  end
+
   private
   # 
   # to set webhook   ->  action = :set 
@@ -55,6 +70,7 @@ module Webhook
     else
       # success
       puts "ok: #{resp['ok']}, result: #{resp['result']}, description: #{resp['description']}".yellow
+
       set_message = "URL: #{url_webhook}".green
       unset_message = "get updates with a long polling connection, now.".green
       puts "#{(action == :reset) ? unset_message : set_message}"
